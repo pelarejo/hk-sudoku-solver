@@ -26,6 +26,8 @@ source-repository head
 library
   exposed-modules:
       Lib
+      Reader
+      Sudoku
   other-modules:
       Paths_sudoku_solver
   hs-source-dirs:
