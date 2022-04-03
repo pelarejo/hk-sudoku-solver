@@ -13,4 +13,4 @@ main = do
   let grid = readGrid lines
   case grid of
     Nothing -> putStrLn "Invalid board"
-    Just su -> putStrLn "Success"
+    Just g -> putStrLn $ gridToText g

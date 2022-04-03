@@ -14,32 +14,11 @@ instance Show Cell where
 newtype Grid = Grid [[Cell]]
   deriving (Show)
 
--- parseGrid :: [String] -> Maybe Grid
--- parseGrid [] = Just $ Grid []
--- parseGrid (x : xs) = case parseRow x of
---   Nothing -> Nothing
---   Just ces -> case parseGrid xs of
---     Nothing -> Nothing
---     Just (Grid ces') -> Just $ Grid (ces : ces')
---   where
---     parseRow :: String -> Maybe [Cell]
---     parseRow [] = Just []
---     parseRow (x : xs) = case parseCell x of
---       Nothing -> Nothing
---       Just ce -> case parseRow xs of
---         Nothing -> Nothing
---         Just ces -> Just $ ce : ces
+rowToText :: [Cell] -> String
+rowToText [] = ""
+rowToText [x] = show x
+rowToText (x : xs) = show x ++ " " ++ rowToText xs
 
---     parseCell :: Char -> Maybe Cell
---     parseCell '0' = Just Empty
---     parseCell c
---       | isDigit c = Just (Cell $ digitToInt c)
---       | otherwise = Nothing
-
--- strGrid :: Grid -> [Char]
--- strGrid = undefined
-
--- strGrid (Grid cells) = concat $ intercalate ["\n"] $ map (map show) cells
---   where
---     lineToStr :: [Cell] -> String
---     lineToStr x = map show x
+gridToText :: Grid -> String
+gridToText (Grid []) = ""
+gridToText (Grid (x : xs)) = rowToText x ++ "\n" ++ gridToText (Grid xs)
