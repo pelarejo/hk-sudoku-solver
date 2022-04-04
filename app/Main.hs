@@ -2,7 +2,7 @@ module Main where
 
 import Data.Text (Text)
 import Reader ( readGrid )
-import Sudoku ( gridToText )
+import Sudoku ( gridToText, gridToTextChoices, reduceGridChoices)
 
 readLines :: FilePath -> IO [String]
 readLines = fmap lines . readFile
@@ -13,4 +13,4 @@ main = do
   let grid = readGrid lines
   case grid of
     Nothing -> putStrLn "Invalid board"
-    Just g -> putStrLn $ gridToText g
+    Just g -> putStrLn $ gridToTextChoices $ reduceGridChoices g

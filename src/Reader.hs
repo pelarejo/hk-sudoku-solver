@@ -4,7 +4,7 @@ import Control.Applicative (Alternative (empty, many, (<|>)))
 import Control.Monad (unless)
 import Data.Char (digitToInt, isDigit)
 import Data.Text (Text)
-import Sudoku (Cell (Cell, Empty), Grid (Grid))
+import Sudoku (Cell (Cell, Empty), Grid)
 
 newtype Reader a = Reader
   { runReader :: String -> Maybe (String, a)
@@ -36,7 +36,7 @@ cellR :: Reader Cell
 cellR = Reader f
   where
     f (x : xs)
-      | x == '0' = Just (xs, Empty)
+      | x == '0' = Just (xs, Empty [1..9])
       | isDigit x = Just (xs, Cell $ digitToInt x)
       | otherwise = Nothing
     f [] = Nothing
@@ -53,8 +53,8 @@ readGrid [] = Nothing
 readGrid [x] = do
   (rest, cells) <- runReader cellsR x
   unless (isFullyConsumed rest) Nothing
-  return (Grid [cells])
+  return [cells]
 readGrid (x : xs) = do
-  Grid cells <- readGrid [x]
-  Grid cells' <- readGrid xs
-  return (Grid (cells ++ cells'))
+  cells <- readGrid [x]
+  cells' <- readGrid xs
+  return (cells ++ cells')
