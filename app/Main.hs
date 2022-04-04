@@ -1,8 +1,8 @@
 module Main where
 
 import Data.Text (Text)
-import Reader
-import Sudoku
+import Reader ( readGrid )
+import Sudoku ( gridToText )
 
 readLines :: FilePath -> IO [String]
 readLines = fmap lines . readFile
