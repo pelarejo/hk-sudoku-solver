@@ -63,22 +63,28 @@ myChunksOf _ [] = []
 myChunksOf size xs = fst split : myChunksOf size (snd split)
   where split = splitAt size xs
 
-repeated :: Eq a => [a] -> Bool
-repeated [] = False
-repeated [_] = False
-repeated (x : xs) = elem x xs || repeated xs
-
-reduceChoices :: Row -> Row
-reduceChoices row = map reduceChoices row
+reduceChoices :: Row -> Maybe Row
+reduceChoices row = mapM reduce row
   where
     isCell (Cell _) = True
     isCell (Empty _) = False
     validCells = filter isCell row
 
-    reduceChoices (Empty choices) = Empty $ filter (\p -> Cell p `notElem` validCells) choices
-    reduceChoices (Cell c) = Cell c
+    reduce (Cell c) = Just (Cell c)
+    reduce (Empty choices) = case filter (\p -> Cell p `notElem` validCells) choices of
+      [] -> Nothing
+      [x] -> Just (Cell x)
+      xs -> Just (Empty xs)
 
-reduceGridChoices :: Grid -> Grid
-reduceGridChoices = reduceRows getRows . reduceRows getColumns . reduceRows getSubGrid
+
+
+reduceGridChoices :: Grid -> Maybe Grid
+reduceGridChoices grid = Just grid >>= reduceDimension getRows >>= reduceDimension getColumns >>= reduceDimension getSubGrid
   where
-    reduceRows f = f . map reduceChoices . f
+    reduceDimension f = fmap f . mapM reduceChoices . f
+
+runReduceGridChoices :: Grid -> Maybe Grid
+runReduceGridChoices grid = case grid' of
+  Just g -> if grid == g then Just grid else runReduceGridChoices g
+  Nothing -> Nothing
+  where grid' = reduceGridChoices grid
